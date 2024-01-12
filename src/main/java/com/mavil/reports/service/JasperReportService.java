@@ -9,7 +9,6 @@ import javax.sql.DataSource;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -18,19 +17,13 @@ public class JasperReportService {
     @Autowired
     private DataSource dataSource;
 
-    public byte[] getItemReport(String ticketId) throws FileNotFoundException, JRException, SQLException {
-
-        File file = ResourceUtils.getFile("/Users/manueljapon/JaspersoftWorkspace/MyReports/ticket2.jrxml");
+    public byte[] runPdfReport(String reportPath, Map parameters) throws FileNotFoundException, JRException, SQLException {
+        File file = ResourceUtils.getFile(reportPath);
         JasperReport jasperReport
                 = JasperCompileManager.compileReport(file.getAbsolutePath());
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource.getConnection());
 
-        Map parametros = new HashMap();
-        parametros.put("ticketid", Integer.valueOf(ticketId));
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros, dataSource.getConnection());
-
-        byte[] reportContent = JasperExportManager.exportReportToPdf(jasperPrint);
-
-        return reportContent;
-
+        return JasperExportManager.exportReportToPdf(jasperPrint);
     }
+
 }
