@@ -8,13 +8,15 @@ import javax.persistence.Table;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "tparams", schema = "public", catalog = "imprentadb")
+@Table(name = "tparams", schema = "${schema}", catalog = "imprentadb")
 public class TparamsEntity {
     private Integer tprmId;
     private String tprmAbrev;
     private String tprmNombre;
     private String tprmVal;
     private Timestamp tprmFechacrea;
+
+    private Integer tprmSeccion;
 
     @Id
     @Column(name = "tprm_id")
@@ -64,6 +66,16 @@ public class TparamsEntity {
 
     public void setTprmFechacrea(Timestamp tprmFechacrea) {
         this.tprmFechacrea = tprmFechacrea;
+    }
+
+    @Basic
+    @Column(name = "tprm_seccion")
+    public Integer getTprmSeccion() {
+        return tprmSeccion;
+    }
+
+    public void setTprmSeccion(Integer tprmSeccion) {
+        this.tprmSeccion = tprmSeccion;
     }
 
     @Override

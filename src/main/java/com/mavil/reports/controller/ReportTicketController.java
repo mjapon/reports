@@ -1,6 +1,7 @@
 package com.mavil.reports.controller;
 
 
+import com.mavil.reports.repository.TParamRepository;
 import com.mavil.reports.service.JasperReportService;
 import com.mavil.reports.util.Constants;
 import net.sf.jasperreports.engine.JRException;
@@ -22,7 +23,10 @@ import java.util.Map;
 public class ReportTicketController extends ReportBaseController {
 
     @Autowired
-    JasperReportService jasperReportService;
+    private JasperReportService jasperReportService;
+
+    @Autowired
+    private TParamRepository tParamRepository;
 
     @GetMapping("get")
     public ResponseEntity<ByteArrayResource> getTicketByCode(@RequestParam String code) throws JRException, IOException, SQLException {
