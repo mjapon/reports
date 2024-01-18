@@ -30,6 +30,10 @@ dependencies {
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	runtimeOnly 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.0'
+	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+
 }
 
 tasks.named('test') {

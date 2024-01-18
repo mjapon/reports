@@ -13,6 +13,10 @@ public class TempresaEntity {
     private String empNroautorizacion;
     private Date empFechaautorizacion;
 
+    private String empEsquema;
+    private String empCodigo;
+    private String empMenu;
+
     @Id
     @Column(name = "emp_id")
     public Integer getEmpId() {
@@ -71,6 +75,36 @@ public class TempresaEntity {
 
     public void setEmpFechaautorizacion(Date empFechaautorizacion) {
         this.empFechaautorizacion = empFechaautorizacion;
+    }
+
+    @Basic
+    @Column(name = "emp_esquema")
+    public String getEmpEsquema() {
+        return empEsquema;
+    }
+
+    public void setEmpEsquema(String empEsquema) {
+        this.empEsquema = empEsquema;
+    }
+
+    @Basic
+    @Column(name = "emp_codigo")
+    public String getEmpCodigo() {
+        return empCodigo;
+    }
+
+    public void setEmpCodigo(String empCodigo) {
+        this.empCodigo = empCodigo;
+    }
+
+    @Basic
+    @Column(name = "emp_menu")
+    public String getEmpMenu() {
+        return empMenu;
+    }
+
+    public void setEmpMenu(String empMenu) {
+        this.empMenu = empMenu;
     }
 
     @Override
