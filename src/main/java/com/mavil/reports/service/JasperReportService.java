@@ -1,6 +1,8 @@
 package com.mavil.reports.service;
 
+import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.util.JRLoader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
@@ -8,22 +10,58 @@ import org.springframework.util.ResourceUtils;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class JasperReportService {
+
+    private static String JASPER_TYPE_FILE = ".jasper";
 
     @Autowired
     private DataSource dataSource;
 
-    public byte[] runPdfReport(String reportPath, Map parameters) throws FileNotFoundException, JRException, SQLException {
-        File file = ResourceUtils.getFile(reportPath);
-        JasperReport jasperReport
-                = JasperCompileManager.compileReport(file.getAbsolutePath());
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource.getConnection());
+    public byte[] runPdfReport(String reportPath, Map parameters) throws SQLException {
 
-        return JasperExportManager.exportReportToPdf(jasperPrint);
+        Long timea = System.currentTimeMillis();
+        byte[] result = {};
+        Connection connection = dataSource.getConnection();
+        try {
+            JasperPrint jasperPrint = JasperFillManager.fillReport(getJasperPrint(reportPath), parameters, connection);
+            result = JasperExportManager.exportReportToPdf(jasperPrint);
+        } catch (Throwable ex) {
+            log.error(String.format("Error al tratar de ejecutar reporte %s", reportPath));
+        } finally {
+            try {
+                connection.close();
+            } catch (Throwable e) {
+                log.error("Error al tratar de cerrar la conexion de base de datos");
+            }
+        }
+        Long timeb = System.currentTimeMillis();
+        log.info(String.format("Tiempo: %d", timeb - timea));
+        return result;
     }
+
+    private JasperReport getJasperPrint(String reportPath) throws JRException, FileNotFoundException {
+        if (reportPath.endsWith(JASPER_TYPE_FILE)) {
+            return getCompiledReport(reportPath);
+        } else {
+            return compileReport(reportPath);
+        }
+    }
+
+    private JasperReport getCompiledReport(String jasperPath) throws JRException {
+        return (JasperReport) JRLoader.loadObject(new File(jasperPath));
+    }
+
+    private JasperReport compileReport(String jrxmlPath) throws FileNotFoundException, JRException {
+        File file = ResourceUtils.getFile(jrxmlPath);
+        return JasperCompileManager.compileReport(file.getAbsolutePath());
+
+    }
+
 
 }

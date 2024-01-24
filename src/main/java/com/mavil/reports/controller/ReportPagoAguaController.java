@@ -18,7 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/comproAgua")
-public class ReportPagaAguaController extends ReportBaseController {
+public class ReportPagoAguaController extends ReportBaseController {
 
     @Autowired
     private TParamRepository paramRepository;
