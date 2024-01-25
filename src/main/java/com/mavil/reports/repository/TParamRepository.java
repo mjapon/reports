@@ -104,12 +104,12 @@ public class TParamRepository {
             reporteEntity = new TReporteEntity(_repId, _repNombre, _repJasper, _repDetalles, _repParams, _repCat);
         }
         return reporteEntity;
-    }
+    }*/
 
 
     public Boolean isNotaVenta(Map<String, Object> transaccDataMap) {
         Integer tra_codigo = Integer.valueOf(String.valueOf(transaccDataMap.get("tra_codigo")));
         return tra_codigo.intValue() == 2;
-    }*/
+    }
 
 }

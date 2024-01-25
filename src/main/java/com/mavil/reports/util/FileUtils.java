@@ -2,47 +2,39 @@ package com.mavil.reports.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.http.MediaType;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 public class FileUtils {
 
     private static final Log log = LogFactory.getLog(FileUtils.class);
 
-    public static String GET_CONTENT_DISPOSITION(String fileExtension) {
+    public static String GET_CONTENT_DISPOSITION(String fileExt) {
         String type = "attachment";
-        if (fileExtension.contains("data:image") || fileExtension.contains("data:application/pdf")) {
+        if (fileExt.contains("data:image") || fileExt.contains("data:application/pdf")) {
             type = "inline";
         }
         return type;
     }
 
-    public static void ADD_FILE_RESPONSE_HEADERS(HttpServletResponse response, String fileExt, String fileName) {
-
-        try {
-            String fileNameTrim = fileName.trim();
-            String auxContentDisp = GET_CONTENT_DISPOSITION(fileExt);
-            String contentDisposition = String.format("%s; filename=\"%s\"", auxContentDisp, fileNameTrim);
-            int beginSubstr = 0;
-            if (fileExt.startsWith("data:")) {
-                beginSubstr = 5;
-            }
-
-            String contentTypePart = fileExt.substring(beginSubstr);
-            String contentType = String.format("%s; name=\"%s\"", contentTypePart, fileNameTrim);
-
-            response.setContentType(contentType);
-            response.setHeader("Content-disposition", contentDisposition);
-            response.setHeader("Pragma", "no-cache");
-            response.setDateHeader("Expires", 0L);
-
-        } catch (Throwable ex) {
-            log.error("Error al agregar cabeceras a respuesta", ex);
-            System.out.println(String.format("Error al agregar cabeceras a respuesta: %s", ex.getMessage()));
-            ex.printStackTrace();
+    public static MediaType getMediaType(String fileExt) {
+        int beginSubstr = 0;
+        if (fileExt.startsWith("data:")) {
+            beginSubstr = 5;
         }
-
-
+        String contentTypePart = fileExt.substring(beginSubstr);
+        return MediaType.parseMediaType(contentTypePart);
     }
+
+    public static Map<String, String> getHeaders(String fileName, String fileExt) {
+        String fileNameTrim = fileName.trim();
+        String auxContentDisp = GET_CONTENT_DISPOSITION(fileExt);
+        String contentDisposition = String.format("%s; filename=\"%s\"", auxContentDisp, fileNameTrim);
+        return Map.of("Content-disposition", contentDisposition,
+                "Pragma", "no-cache");
+    }
+
 
 }

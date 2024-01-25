@@ -47,6 +47,6 @@ public class ReportPagoAguaController extends ReportBaseController {
         byte[] reportContent = jasperReportService.runPdfReport(pathReporte, parametros);
 
         String reportName = String.format("ComprobanteAgua_%d.pdf", request.getTrnCodigo());
-        return buildResponse(reportName, reportContent);
+        return buildPDFResponse(reportName, reportContent);
     }
 }

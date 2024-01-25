@@ -36,7 +36,7 @@ public class ReportTicketController extends ReportBaseController {
 
         byte[] reportContent = jasperReportService.runPdfReport(Constants.PATH_REPORT_TICKETS, parametros);
 
-        return buildResponse("ticket.pdf", reportContent);
+        return buildPDFResponse("ticket.pdf", reportContent);
 
     }
 }

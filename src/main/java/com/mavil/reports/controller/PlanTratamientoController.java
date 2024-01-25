@@ -14,32 +14,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/abono")
-public class ReportAbonoController extends ReportBaseController {
+@RequestMapping("/planTratamiento")
+public class PlanTratamientoController extends ReportBaseController {
+
 
     @Autowired
     private TParamRepository paramRepository;
 
     @GetMapping("get")
-    public ResponseEntity<ByteArrayResource> getReport(@RequestParam Integer emp, @RequestParam Integer trn) throws SQLException {
+    public ResponseEntity<ByteArrayResource> getReport(@RequestParam Integer emp, @RequestParam Integer cod) throws SQLException {
 
-        String esquema = getEmpEsquema(emp);
+        String empEsquema = getEmpEsquema(emp);
 
-        Map<String, Object> trnDataMap = paramRepository.getTransaccData(esquema, trn);
-        String secCodigo = String.valueOf(trnDataMap.get("sec_codigo"));
-
-        String pathReporte = paramRepository.getParamValue(esquema, "pathReporteAbo");
-        String pathFondo = paramRepository.getParamValue(esquema, "pathFondoAbo", secCodigo);
+        String pathLogo = paramRepository.getParamValue(empEsquema, "pathlogoplnod");
+        String pathReporte = paramRepository.getParamValue(empEsquema, "pathPlanTrata");
 
         Map parametros = new HashMap();
-        parametros.put("ptrncod", trn);
-        parametros.put("pesquema", esquema);
-        parametros.put("pathfondo", pathFondo);
+        parametros.put("codpt", cod);
+        parametros.put("esquema", empEsquema);
+        parametros.put("pathlogo", pathLogo);
 
         byte[] reportContent = jasperReportService.runPdfReport(pathReporte, parametros);
 
-        String reportName = String.format("Abono_%d.pdf", trn);
+        String reportName = String.format("PlanTratamiento_%d.pdf", cod);
         return buildPDFResponse(reportName, reportContent);
-    }
 
+    }
 }

@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/abono")
-public class ReportAbonoController extends ReportBaseController {
+@RequestMapping("/factura")
+public class ReportFacturaController extends ReportBaseController {
 
     @Autowired
     private TParamRepository paramRepository;
@@ -28,8 +28,17 @@ public class ReportAbonoController extends ReportBaseController {
         Map<String, Object> trnDataMap = paramRepository.getTransaccData(esquema, trn);
         String secCodigo = String.valueOf(trnDataMap.get("sec_codigo"));
 
-        String pathReporte = paramRepository.getParamValue(esquema, "pathReporteAbo");
-        String pathFondo = paramRepository.getParamValue(esquema, "pathFondoAbo", secCodigo);
+        Boolean isNotaVenta = paramRepository.isNotaVenta(trnDataMap);
+
+        String pathFondo = paramRepository.getParamValue(esquema, "pathFondoFact", secCodigo);
+
+        String paramTemplate = "pathReporteFact";
+        if (isNotaVenta) {
+            pathFondo = paramRepository.getParamValue(esquema, "pathFondoNotaV", secCodigo);
+            paramTemplate = "pathReporteNotaV";
+        }
+
+        String pathReporte = paramRepository.getParamValue(esquema, paramTemplate, secCodigo);
 
         Map parametros = new HashMap();
         parametros.put("ptrncod", trn);
@@ -38,8 +47,10 @@ public class ReportAbonoController extends ReportBaseController {
 
         byte[] reportContent = jasperReportService.runPdfReport(pathReporte, parametros);
 
-        String reportName = String.format("Abono_%d.pdf", trn);
+        String reportName = String.format("Comprobante_%d.pdf", trn);
         return buildPDFResponse(reportName, reportContent);
+
     }
+
 
 }
