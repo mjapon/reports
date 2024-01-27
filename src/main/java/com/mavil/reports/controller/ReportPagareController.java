@@ -1,8 +1,6 @@
 package com.mavil.reports.controller;
 
-
 import com.mavil.reports.repository.TParamRepository;
-import com.mavil.reports.service.JasperReportService;
 import com.mavil.reports.util.Constants;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,24 +17,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/tickets")
-public class ReportTicketController extends ReportBaseController {
-
-    @Autowired
-    private JasperReportService jasperReportService;
+@RequestMapping("/pagare")
+public class ReportPagareController extends ReportBaseController{
 
     @Autowired
     private TParamRepository paramRepository;
 
     @GetMapping("get")
-    public ResponseEntity<ByteArrayResource> getTicketByCode(@RequestParam Integer emp, @RequestParam String code) throws JRException, IOException, SQLException {
+    public ResponseEntity<ByteArrayResource> getReport(@RequestParam Integer emp, @RequestParam Integer codcred) throws JRException, IOException, SQLException {
+
         String esquema = getEmpEsquema(emp);
 
-        String pathReporte = paramRepository.getParamValue(esquema, "pathReporteTicket");
+        String pathReporte = paramRepository.getParamValue(esquema, "pathReportPagare");
+
         Map parametros = new HashMap();
-        parametros.put("ticketid", Integer.valueOf(code));
+        parametros.put("pesquema", esquema);
+        parametros.put("pcredid", codcred);
 
         byte[] reportContent = jasperReportService.runPdfReport(pathReporte, parametros);
-        return buildPDFResponse("Ticket.pdf", reportContent);
+        String reportName = String.format("ReportePagare_%d.pdf", codcred);
+        return buildPDFResponse(reportName, reportContent);
     }
+
 }
