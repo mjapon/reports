@@ -1,6 +1,7 @@
 package com.mavil.reports.controller;
 
 import com.mavil.reports.repository.TParamRepository;
+import com.mavil.reports.vo.TransaccDataVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +26,10 @@ public class ReportAbonoController extends ReportBaseController {
 
         String esquema = getEmpEsquema(emp);
 
-        Map<String, Object> trnDataMap = paramRepository.getTransaccData(esquema, trn);
-        String secCodigo = String.valueOf(trnDataMap.get("sec_codigo"));
+        TransaccDataVo transaccData = paramRepository.getTransaccData(esquema, trn);
 
         String pathReporte = paramRepository.getParamValue(esquema, "pathReporteAbo");
-        String pathFondo = paramRepository.getParamValue(esquema, "pathFondoAbo", secCodigo);
+        String pathFondo = paramRepository.getParamValue(esquema, "pathFondoAbo", transaccData.getSecCodigo());
 
         Map parametros = new HashMap();
         parametros.put("ptrncod", trn);

@@ -1,6 +1,7 @@
 package com.mavil.reports.controller;
 
 import com.mavil.reports.repository.TParamRepository;
+import com.mavil.reports.vo.TransaccDataVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +26,10 @@ public class ReportFacturaController extends ReportBaseController {
 
         String esquema = getEmpEsquema(emp);
 
-        Map<String, Object> trnDataMap = paramRepository.getTransaccData(esquema, trn);
-        String secCodigo = String.valueOf(trnDataMap.get("sec_codigo"));
+        TransaccDataVo transaccDataVo = paramRepository.getTransaccData(esquema, trn);
 
-        Boolean isNotaVenta = paramRepository.isNotaVenta(trnDataMap);
+        Boolean isNotaVenta = paramRepository.isNotaVenta(Integer.valueOf(transaccDataVo.getTraCodigo()));
+        String secCodigo = transaccDataVo.getSecCodigo();
 
         String pathFondo = paramRepository.getParamValue(esquema, "pathFondoFact", secCodigo);
 
@@ -49,8 +50,5 @@ public class ReportFacturaController extends ReportBaseController {
 
         String reportName = String.format("Comprobante_%d.pdf", trn);
         return buildPDFResponse(reportName, reportContent);
-
     }
-
-
 }

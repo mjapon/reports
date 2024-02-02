@@ -44,7 +44,13 @@ public class ReportBaseController {
     protected ResponseEntity<ByteArrayResource> buildHtmlMessage(String message) {
         Map<String, String> headers = Map.of(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.inline()
                 .build().toString());
-        return auxBuildResponse(message.getBytes(StandardCharsets.UTF_8), MediaType.TEXT_HTML, headers);
+        return auxBuildResponse(message.getBytes(StandardCharsets.ISO_8859_1), MediaType.TEXT_HTML, headers);
+    }
+
+    protected ResponseEntity<ByteArrayResource> buildXmlMessage(String message) {
+        Map<String, String> headers = Map.of(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.inline()
+                .build().toString());
+        return auxBuildResponse(message.getBytes(StandardCharsets.ISO_8859_1), MediaType.TEXT_XML, headers);
     }
 
     protected ResponseEntity<ByteArrayResource> buildCustomTypeResponse(String fileName, String fileExt, byte[] content) {

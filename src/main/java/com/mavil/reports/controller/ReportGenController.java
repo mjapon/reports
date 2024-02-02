@@ -49,21 +49,21 @@ public class ReportGenController extends ReportBaseController {
         String pathReporte = tReportVo.getRepJasper();
 
 
-        String contentType = "application/pdf;";
+        //String contentType = "application/pdf;";
         String inline = "inline";
         String ext = "pdf";
         if ("2".equalsIgnoreCase(formato)) {
-            contentType = "application/vnd.ms-excel;";
+            //contentType = "application/vnd.ms-excel;";
             ext = "xls";
             inline = "attachment";
         } else if ("3".equalsIgnoreCase(formato)) {
-            contentType = "text/html;";
+            //contentType = "text/html;";
             ext = ".html";
         }
 
         String fechahora = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
         String filename = String.format("Reporte%s_%s.%s", tReportVo.getRepNombre(), fechahora, ext);
-        String contentDisposition = String.format("%s; filename=%s", inline, filename);
+        //String contentDisposition = String.format("%s; filename=%s", inline, filename);
 
 
         byte[] reportContent;

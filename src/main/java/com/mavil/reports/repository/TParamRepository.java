@@ -1,14 +1,13 @@
 package com.mavil.reports.repository;
 
+import com.mavil.reports.vo.TransaccDataVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Component
 @Slf4j
@@ -51,9 +50,9 @@ public class TParamRepository {
     public Integer getTraCodigo(String esquema, Integer trncodigo) {
         try {
             Integer tracodigo = 0;
-            String queryStr = String.format("select tra_codigo, trn_codigo from %s.tasiento where trn_codigo = %s ",
-                    String.valueOf(esquema),
-                    String.valueOf(trncodigo));
+            String queryStr = String.format("select tra_codigo, trn_codigo from %s.tasiento where trn_codigo = %d ",
+                    esquema,
+                    trncodigo);
             Query query = entityManager.createNativeQuery(queryStr);
             Object[] res = (Object[]) query.getSingleResult();
             if (res != null) {
@@ -61,55 +60,31 @@ public class TParamRepository {
             }
             return tracodigo;
         } catch (RuntimeException re) {
-            log.trace("prueba");
-            //log.error("Error al obtener datos de la factura", re);
+            log.trace("Error al obtener datos de la factura", re);
             throw re;
         }
     }
 
-    public Map<String, Object> getTransaccData(String schema, Integer trncod) {
+    public TransaccDataVo getTransaccData(String schema, Integer trncod) {
         try {
             String sql = String.format("select tra_codigo, sec_codigo from %s.tasiento where trn_codigo = %d",
                     schema, trncod);
             Object[] result = (Object[]) entityManager.createNativeQuery(sql).getSingleResult();
-            Map resultMap = new HashMap();
             if (result != null) {
-                resultMap.put("tra_codigo", result[0]);
-                resultMap.put("sec_codigo", result[1]);
+                return TransaccDataVo.builder()
+                        .traCodigo(String.valueOf(result[0]))
+                        .secCodigo(String.valueOf(result[1]))
+                        .build();
             }
-            return resultMap;
-
+            return null;
         } catch (RuntimeException ex) {
             log.error("Error al recuperar datos de transaccion", ex);
             throw ex;
         }
     }
 
-    /*public TReporteEntity getDatosReporte(Integer repId, String esquema) {
-        String queryStr = String.format("select rep_id, rep_nombre, rep_jasper, rep_detalle, rep_params, rep_cat from %s.treporte where rep_id = %s ",
-                String.valueOf(esquema),
-                String.valueOf(repId));
-        Query query = entityManager.createNativeQuery(queryStr);
-        Object[] res = (Object[]) query.getSingleResult();
-        TReporteEntity reporteEntity = null;
-
-        if (res != null) {
-            Integer _repId = Integer.valueOf(String.valueOf(res[0]));
-            String _repNombre = String.valueOf(res[1]);
-            String _repJasper = String.valueOf(res[2]);
-            String _repDetalles = String.valueOf(res[3]);
-            String _repParams = String.valueOf(res[4]);
-            Integer _repCat = Integer.valueOf(String.valueOf(res[5]));
-
-            reporteEntity = new TReporteEntity(_repId, _repNombre, _repJasper, _repDetalles, _repParams, _repCat);
-        }
-        return reporteEntity;
-    }*/
-
-
-    public Boolean isNotaVenta(Map<String, Object> transaccDataMap) {
-        Integer tra_codigo = Integer.valueOf(String.valueOf(transaccDataMap.get("tra_codigo")));
-        return tra_codigo.intValue() == 2;
+    public Boolean isNotaVenta(Integer traCodigo) {
+        return traCodigo.intValue() == 2;
     }
 
 }

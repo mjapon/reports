@@ -13,17 +13,18 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class GenXmlCompeUtil {
 
-    public void genXml(OutputStream outputStream, String estadoValue,
-                       String numeroAutorizacionValue,
-                       String fechaAutorizacionValue,
-                       String ambienteValue,
-                       String pathDocSigned
+    public String genXml(String estadoValue,
+                         String numeroAutorizacionValue,
+                         String fechaAutorizacionValue,
+                         String ambienteValue,
+                         String pathDocSigned
     ) throws ParserConfigurationException {
 
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -67,22 +68,24 @@ public class GenXmlCompeUtil {
         rootElement.appendChild(mensajes);
 
         try {
-            writeXml(doc, outputStream);
+            return writeXml(doc);
         } catch (TransformerException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void writeXml(Document doc, OutputStream output) throws TransformerException {
+    private String writeXml(Document doc) throws TransformerException {
+
+        StringWriter writer = new StringWriter();
+        StreamResult result = new StreamResult(writer);
 
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
-        DOMSource source = new DOMSource(doc);
-        StreamResult result = new StreamResult(output);
 
+        DOMSource source = new DOMSource(doc);
         transformer.transform(source, result);
 
+        return writer.toString();
     }
-
 
 }
