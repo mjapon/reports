@@ -1,15 +1,11 @@
 package com.mavil.reports.controller;
 
 import com.mavil.reports.repository.TAttachRepository;
-import com.mavil.reports.repository.TParamRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,7 +13,7 @@ import java.io.IOException;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/getAttach")
+@RequestMapping("/attach")
 @Slf4j
 public class FileRxDocController extends ReportBaseController {
     @Autowired
@@ -25,8 +21,8 @@ public class FileRxDocController extends ReportBaseController {
 
     private static final String RXD_TYPE = "rxd";
 
-    @GetMapping("get")
-    public ResponseEntity<ByteArrayResource> getReport(@RequestParam Integer emp, @RequestParam String cod, @RequestParam String tipo) {
+    @GetMapping("{emp}/{cod}")
+    public ResponseEntity<ByteArrayResource> getReport(@PathVariable Integer emp, @PathVariable String cod, @RequestParam String tipo) {
 
         String empEsquema = getEmpEsquema(emp);
 

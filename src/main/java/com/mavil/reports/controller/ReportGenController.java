@@ -6,9 +6,11 @@ import com.mavil.reports.vo.ReportGenParamsVo;
 import com.mavil.reports.vo.TReportVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -17,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/reporteGen")
+@RequestMapping("/report-gen")
 public class ReportGenController extends ReportBaseController {
 
     @Autowired
@@ -26,7 +28,7 @@ public class ReportGenController extends ReportBaseController {
     @Autowired
     private TReportGenRepository reportGenRepository;
 
-    @PostMapping("gen")
+    @PostMapping
     public ResponseEntity<ByteArrayResource> getReport(@RequestBody ReportGenParamsVo request) throws SQLException {
 
         String esquema = this.getEmpEsquema(request.getCodemp());

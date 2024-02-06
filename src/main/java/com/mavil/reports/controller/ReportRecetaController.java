@@ -6,10 +6,7 @@ import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -23,8 +20,8 @@ public class ReportRecetaController extends ReportBaseController{
     @Autowired
     private TParamRepository paramRepository;
 
-    @GetMapping("get")
-    public ResponseEntity<ByteArrayResource> getReport(@RequestParam Integer emp, @RequestParam Integer ccm) throws JRException, IOException, SQLException {
+    @GetMapping("{emp}/{ccm}")
+    public ResponseEntity<ByteArrayResource> getReport(@PathVariable Integer emp, @PathVariable Integer ccm) throws JRException, IOException, SQLException {
 
         String esquema = getEmpEsquema(emp);
 

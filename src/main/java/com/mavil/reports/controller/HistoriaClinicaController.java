@@ -15,14 +15,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/historiaClinica")
+@RequestMapping("/historia-clinica")
 @Slf4j
 public class HistoriaClinicaController extends ReportBaseController {
 
     @Autowired
     private TParamRepository paramRepository;
 
-    @GetMapping("get")
+    @GetMapping()
     public ResponseEntity<ByteArrayResource> getReporte(@RequestParam Integer emp, @RequestParam String ch) {
 
         String esquema = getEmpEsquema(emp);

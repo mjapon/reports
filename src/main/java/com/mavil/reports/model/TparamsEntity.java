@@ -15,7 +15,6 @@ public class TparamsEntity {
     private String tprmNombre;
     private String tprmVal;
     private Timestamp tprmFechacrea;
-
     private Integer tprmSeccion;
 
     @Id

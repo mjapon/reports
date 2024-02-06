@@ -17,17 +17,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/comproAgua")
+@RequestMapping("/compro-agua")
 public class ReportPagoAguaController extends ReportBaseController {
 
     @Autowired
     private TParamRepository paramRepository;
 
-    @PostMapping("generate")
+    @PostMapping
     public ResponseEntity<ByteArrayResource> getReport(@RequestBody ComproAguaRequestVo request) throws JRException, IOException, SQLException {
-
         String esquema = getEmpEsquema(request.getEmpCodigo());
-
         String pathFondo = paramRepository.getParamValue(esquema, "pathFondoAgua");
         String pathReporte = paramRepository.getParamValue(esquema, "pathReporteAgua");
 
