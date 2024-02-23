@@ -40,7 +40,7 @@ public class JasperReportService {
             JasperPrint jasperPrint = JasperFillManager.fillReport(getJasperPrint(reportPath), parameters, connection);
             result = JasperExportManager.exportReportToPdf(jasperPrint);
         } catch (Throwable ex) {
-            log.error(String.format("Error al tratar de ejecutar reporte %s", reportPath));
+            log.error(String.format("Error al tratar de ejecutar reporte %s", reportPath), ex);
         } finally {
             try {
                 connection.close();
@@ -80,7 +80,7 @@ public class JasperReportService {
             exporter.exportReport();
             result = baos.toByteArray();
         } catch (Throwable ex) {
-            log.error(String.format("Error al tratar de ejecutar reporte %s", reportPath));
+            log.error(String.format("Error al tratar de ejecutar reporte %s", reportPath, ex));
         } finally {
             try {
                 connection.close();
@@ -112,7 +112,7 @@ public class JasperReportService {
 
             result = baos.toByteArray();
         } catch (Throwable ex) {
-            log.error(String.format("Error al tratar de ejecutar reporte %s", reportPath));
+            log.error(String.format("Error al tratar de ejecutar reporte %s", reportPath, ex));
         } finally {
             try {
                 connection.close();

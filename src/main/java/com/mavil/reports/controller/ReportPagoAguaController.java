@@ -1,15 +1,13 @@
 package com.mavil.reports.controller;
 
 import com.mavil.reports.repository.TParamRepository;
+import com.mavil.reports.util.Constants;
 import com.mavil.reports.vo.ComproAguaRequestVo;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -23,14 +21,15 @@ public class ReportPagoAguaController extends ReportBaseController {
     @Autowired
     private TParamRepository paramRepository;
 
-    @PostMapping
-    public ResponseEntity<ByteArrayResource> getReport(@RequestBody ComproAguaRequestVo request) throws JRException, IOException, SQLException {
-        String esquema = getEmpEsquema(request.getEmpCodigo());
+    @CrossOrigin(origins = Constants.ALLOWED_ORIGINS)
+    @PostMapping(value="{emp}")
+    public ResponseEntity<ByteArrayResource> getReport(@PathVariable Integer emp, @RequestBody ComproAguaRequestVo request) throws JRException, IOException, SQLException {
+        String esquema = getEmpEsquema(emp);
         String pathFondo = paramRepository.getParamValue(esquema, "pathFondoAgua");
         String pathReporte = paramRepository.getParamValue(esquema, "pathReporteAgua");
 
         Map parametros = new HashMap();
-        parametros.put("ptrncod", request.getTrnCodigo());
+        parametros.put("ptrncod", request.getTrncod());
         parametros.put("pesquema", esquema);
         parametros.put("pathfondo", pathFondo);
         parametros.put("pexceso", request.getPexceso());
@@ -44,7 +43,7 @@ public class ReportPagoAguaController extends ReportBaseController {
 
         byte[] reportContent = jasperReportService.runPdfReport(pathReporte, parametros);
 
-        String reportName = String.format("ComprobanteAgua_%d.pdf", request.getTrnCodigo());
+        String reportName = String.format("ComprobanteAgua_%d.pdf", request.getTrncod());
         return buildPDFResponse(reportName, reportContent);
     }
 }

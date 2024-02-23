@@ -8,7 +8,7 @@ import lombok.Data;
 public class ComproAguaRequestVo {
 
     private Integer empCodigo;
-    private Integer trnCodigo;
+    private Integer trncod;
 
     private String pexceso;
     private String pvconsumo;

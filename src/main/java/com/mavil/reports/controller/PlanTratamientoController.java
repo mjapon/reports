@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/planTratamiento")
+@RequestMapping("/plan-tratamiento")
 public class PlanTratamientoController extends ReportBaseController {
 
 

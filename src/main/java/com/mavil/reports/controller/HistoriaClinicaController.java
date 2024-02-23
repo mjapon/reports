@@ -5,10 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -22,8 +19,8 @@ public class HistoriaClinicaController extends ReportBaseController {
     @Autowired
     private TParamRepository paramRepository;
 
-    @GetMapping()
-    public ResponseEntity<ByteArrayResource> getReporte(@RequestParam Integer emp, @RequestParam String ch) {
+    @GetMapping("{emp}/{ch}")
+    public ResponseEntity<ByteArrayResource> getReporte(@PathVariable Integer emp, @PathVariable Integer ch) {
 
         String esquema = getEmpEsquema(emp);
         String rutaReporte = paramRepository.getParamValue(esquema, "pathReporteHC");
@@ -33,7 +30,7 @@ public class HistoriaClinicaController extends ReportBaseController {
         parametros.put("esquema", esquema);
         try {
             byte[] reportContent = jasperReportService.runPdfReport(rutaReporte, parametros);
-            String reportName = String.format("Historia_Clinica_%d.pdf", ch);
+            String reportName = String.format("Historia_Clinica_%s.pdf", ch);
             return buildPDFResponse(reportName, reportContent);
 
         } catch (SQLException e) {

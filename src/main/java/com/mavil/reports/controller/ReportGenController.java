@@ -2,15 +2,13 @@ package com.mavil.reports.controller;
 
 import com.mavil.reports.repository.TParamRepository;
 import com.mavil.reports.repository.TReportGenRepository;
+import com.mavil.reports.util.Constants;
 import com.mavil.reports.vo.ReportGenParamsVo;
 import com.mavil.reports.vo.TReportVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -28,10 +26,11 @@ public class ReportGenController extends ReportBaseController {
     @Autowired
     private TReportGenRepository reportGenRepository;
 
-    @PostMapping
-    public ResponseEntity<ByteArrayResource> getReport(@RequestBody ReportGenParamsVo request) throws SQLException {
+    @CrossOrigin(origins = Constants.ALLOWED_ORIGINS)
+    @PostMapping(value="{emp}")
+    public ResponseEntity<ByteArrayResource> getReport(@PathVariable Integer emp, @RequestBody ReportGenParamsVo request) throws SQLException {
 
-        String esquema = this.getEmpEsquema(request.getCodemp());
+        String esquema = this.getEmpEsquema(emp);
         TReportVo tReportVo = reportGenRepository.getDatosReporte(request.getCodrep(), esquema);
 
 
@@ -39,28 +38,28 @@ public class ReportGenController extends ReportBaseController {
         parametros.put("pesquema", esquema);
         parametros.put("pdesde", request.getPdesde());
         parametros.put("phasta", request.getPhasta());
-        parametros.put("psecid", request.getPsecid());
-        parametros.put("pusid", request.getPusid());
-        parametros.put("prefid", request.getPrefid());
+        parametros.put("psecid", request.getSecid());
+        parametros.put("pusid", request.getUsid());
+        parametros.put("prefid", request.getRefid());
         String pfechas = String.format("and asi.trn_fecreg between '%s' and '%s'", request.getPdesde(), request.getPhasta());
         parametros.put("pfechas", pfechas);
-        parametros.put("labelparams", request.getLabelParams());
+        parametros.put("labelparams", request.getLabelparams());
 
 
-        String formato = request.getPfmt();
+        String formato = request.getFmt();
         String pathReporte = tReportVo.getRepJasper();
 
 
-        //String contentType = "application/pdf;";
-        String inline = "inline";
+        String contentType = "application/pdf;";
+        //String inline = "inline";
         String ext = "pdf";
         if ("2".equalsIgnoreCase(formato)) {
-            //contentType = "application/vnd.ms-excel;";
+            contentType = "application/vnd.ms-excel;";
             ext = "xls";
-            inline = "attachment";
+            //inline = "attachment";
         } else if ("3".equalsIgnoreCase(formato)) {
-            //contentType = "text/html;";
-            ext = ".html";
+            contentType = "text/html;";
+            ext = "html";
         }
 
         String fechahora = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
@@ -77,7 +76,7 @@ public class ReportGenController extends ReportBaseController {
             reportContent = jasperReportService.runPdfReport(pathReporte, parametros);
         }
 
-        return buildCustomTypeResponse(filename, ext, reportContent);
+        return buildCustomTypeResponse(filename, contentType, reportContent);
 
     }
 }
