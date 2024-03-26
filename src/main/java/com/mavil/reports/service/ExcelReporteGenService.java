@@ -1,18 +1,13 @@
 package com.mavil.reports.service;
 
+import com.mavil.reports.vo.FilaBalanceVo;
+import com.mavil.reports.vo.GenBalanceRequestVo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -23,28 +18,33 @@ import java.util.List;
 @Slf4j
 public class ExcelReporteGenService {
 
-    public static byte[] generateExcel() {
+    public byte[] generateExcel(GenBalanceRequestVo requestVo) {
 
         byte[] bytes = null;
 
         try (XSSFWorkbook workbook = new XSSFWorkbook(); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             XSSFSheet sheet = workbook.createSheet();
 
-
             //codigo de barras
-            CellStyle blueStyle = ExcelUtilService.createCellStyle(workbook, IndexedColors.RED.getIndex(),
-                    IndexedColors.WHITE.getIndex(), true);
-            CellStyle blankStyle = ExcelUtilService.createCellStyle(workbook, IndexedColors.WHITE.getIndex(),
-                    IndexedColors.BLACK.getIndex(), false);
+            CellStyle centerStyle = ExcelUtilService.createCellStyle(workbook, IndexedColors.WHITE.getIndex(),
+                    IndexedColors.BLACK.getIndex(), false, HorizontalAlignment.CENTER);
 
-            List<String> blueColumns = new ArrayList<>(Arrays.asList("Nro", "Local", "Artículos", "Estado", "Progreso"));
+            CellStyle rightStyle = ExcelUtilService.createCellStyle(workbook, IndexedColors.WHITE.getIndex(),
+                    IndexedColors.BLACK.getIndex(), false, HorizontalAlignment.RIGHT);
+
+            CellStyle blueStyle = ExcelUtilService.createCellStyle(workbook, IndexedColors.MAROON.getIndex(),
+                    IndexedColors.WHITE.getIndex(), true, HorizontalAlignment.LEFT);
+            CellStyle blankStyle = ExcelUtilService.createCellStyle(workbook, IndexedColors.WHITE.getIndex(),
+                    IndexedColors.BLACK.getIndex(), false, HorizontalAlignment.LEFT);
+
+            List<String> blueColumns = new ArrayList<>(Arrays.asList("Código", "Nombre", "Saldo"));
 
             Row row0 = sheet.createRow(0);
 
             Cell cell = row0.createCell(0);
-            cell.setCellValue("REPORTE DE TAREAS");
-            cell.setCellStyle(blankStyle);
-            sheet.addMergedRegion(new CellRangeAddress(0,0,0,5));
+            cell.setCellValue(String.format("BALANCE GENERAL\nPeriodo:%s", requestVo.getTitulo()));
+            cell.setCellStyle(centerStyle);
+            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 2));
 
             Row row = sheet.createRow(1);
             int columnCount = 0;
@@ -53,18 +53,16 @@ public class ExcelReporteGenService {
                 sheet.setColumnWidth(columnCount + blueColumns.indexOf(column), ExcelUtilService.DEFAULT_CELL_WIDTH);
             }
 
-            /*
-            for (LocalHeadTaskVo rowData : localHeadTasks) {
-                Row rowIt = sheet.createRow(localHeadTasks.indexOf(rowData) + 2);
-                ExcelPoiUtil.addCell(String.valueOf(localHeadTasks.indexOf(rowData) + 2), rowIt, 0, blankStyle);
-                ExcelPoiUtil.addCell(String.format("%d - %s - %s",
-                        rowData.getWorkAreaReferenceCode(),
-                        rowData.getWorkAreaBusinessFormat(),
-                        rowData.getWorkAreaName()), rowIt, 1, blankStyle);
-                ExcelPoiUtil.addCell(String.valueOf(rowData.getNumTasks()), rowIt, 2, blankStyle);
-                ExcelPoiUtil.addCell(rowData.getStatusName(), rowIt, 3, blankStyle);
-                ExcelPoiUtil.addCell(String.valueOf(rowData.getProgress()), rowIt, 4, blankStyle);
-            }*/
+            sheet.setColumnWidth(1, ExcelUtilService.DEFAULT_CELL_WIDTH * 3);
+
+            List<FilaBalanceVo> items = requestVo.getItems();
+
+            for (FilaBalanceVo rowData : items) {
+                Row rowIt = sheet.createRow(items.indexOf(rowData) + 2);
+                ExcelUtilService.addCell(rowData.getCodigo(), rowIt, 0, blankStyle);
+                ExcelUtilService.addCell(rowData.getNombre(), rowIt, 1, blankStyle);
+                ExcelUtilService.addCell(rowData.getTotal(), rowIt, 2, rightStyle);
+            }
 
             workbook.write(outputStream);
             bytes = outputStream.toByteArray();

@@ -37,8 +37,13 @@ dependencies {
 	//implementation 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.0'
+	implementation group: 'org.apache.commons', name: 'commons-collections4', version: '4.1'
 	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'com.itextpdf:html2pdf:2.1.2'
+	implementation 'commons-io:commons-io:2.11.0'
+
 
 }
 

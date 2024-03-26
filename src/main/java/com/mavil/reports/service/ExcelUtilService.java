@@ -1,3 +1,4 @@
+
 package com.mavil.reports.service;
 
 
@@ -18,7 +19,8 @@ public class ExcelUtilService {
         cell.setCellStyle(cellStyle);
     }
 
-    public static CellStyle createCellStyle(XSSFWorkbook workbook, Short backgroundColor, Short fontColor, Boolean bold) {
+    public static CellStyle createCellStyle(XSSFWorkbook workbook, Short backgroundColor, Short fontColor,
+                                            Boolean bold) {
         return createCellStyle(workbook, backgroundColor, fontColor, bold, HorizontalAlignment.CENTER);
     }
 
