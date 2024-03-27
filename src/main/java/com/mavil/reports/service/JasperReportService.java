@@ -27,6 +27,7 @@ import java.util.Map;
 public class JasperReportService {
 
     private static String JASPER_TYPE_FILE = ".jasper";
+    private static String JRXML_TYPE_FILE = ".jrxml";
 
     @Autowired
     private DataSource dataSource;
@@ -129,7 +130,12 @@ public class JasperReportService {
         if (reportPath.endsWith(JASPER_TYPE_FILE)) {
             return getCompiledReport(reportPath);
         } else {
-            return compileReport(reportPath);
+            String compiledReportPath = reportPath.substring(0, reportPath.lastIndexOf(JRXML_TYPE_FILE)).concat(JASPER_TYPE_FILE);
+            try {
+                return getCompiledReport(compiledReportPath);
+            } catch (JRException e) {
+                return compileReport(reportPath);
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 package com.mavil.reports.controller;
 
 import com.mavil.reports.repository.TAttachRepository;
+import com.mavil.reports.util.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -21,6 +22,7 @@ public class FileRxDocController extends ReportBaseController {
 
     private static final String RXD_TYPE = "rxd";
 
+    @CrossOrigin(origins = Constants.ALLOWED_ORIGINS)
     @GetMapping("{emp}/{cod}")
     public ResponseEntity<ByteArrayResource> getReport(@PathVariable Integer emp, @PathVariable String cod, @RequestParam String tipo) {
 

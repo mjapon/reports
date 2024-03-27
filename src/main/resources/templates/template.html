@@ -74,8 +74,8 @@
 </head>
 <body>
 <div class="titrep">
-    <div class="spm headrep">BALANCE GENERAL</div>
     <div class="spm headrep" th:text="${titulo}"></div>
+    <div class="spm headrep" th:text="${periodo}"></div>
 </div>
 <table class="table">
     <thead>
@@ -96,33 +96,17 @@
 </table>
 <div style="margin-top:10px">
     <div>
-        <span class="headresumen">Ecuación Contable</span>
+        <span class="headresumen">Resumen:</span>
     </div>
     <table>
         <tbody>
-        <tr>
-            <td class="izquierda" style="width:50%">ACTIVOS:</td>
-            <td class="izquierda" th:text="${resumen.activos}"></td>
-        </tr>
-        <tr>
-            <td class="izquierda" style="width:50%">PASIVOS:</td>
-            <td class="izquierda" th:text="${resumen.pasivos}"></td>
-        </tr>
-        <tr>
-            <td class="izquierda" style="width:50%">PATRIMONIO:</td>
-            <td class="izquierda" th:text="${resumen.patrimonio}"></td>
-        </tr>
-        <tr>
-            <td class="izquierda" style="width:50%">RESULTADO DEL EJERCICIO:</td>
-            <td class="izquierda" th:text="${resumen.resultado}"></td>
-        </tr>
-        <tr>
-            <td class="izquierda" style="width:50%">ACTIVO = PASIVO + PATRIMONIO::</td>
-            <td class="izquierda" th:text="${resumen.resumen}"></td>
+        <tr th:each="item : ${resumenitems}">
+            <td class="izquierda" style="width:50%" th:text="${item.label}"></td>
+            <td class="izquierda" th:text="${item.value}"></td>
         </tr>
         </tbody>
 
     </table>
 </div>
-</html>
 </body>
+</html>

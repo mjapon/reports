@@ -1,6 +1,7 @@
 package com.mavil.reports.controller;
 
 import com.mavil.reports.repository.TParamRepository;
+import com.mavil.reports.util.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -19,6 +20,7 @@ public class HistoriaClinicaController extends ReportBaseController {
     @Autowired
     private TParamRepository paramRepository;
 
+    @CrossOrigin(origins = Constants.ALLOWED_ORIGINS)
     @GetMapping("{emp}/{ch}")
     public ResponseEntity<ByteArrayResource> getReporte(@PathVariable Integer emp, @PathVariable Integer ch) {
 

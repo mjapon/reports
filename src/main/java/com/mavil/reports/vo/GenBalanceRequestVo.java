@@ -11,7 +11,8 @@ import java.util.List;
 @JsonIgnoreProperties
 public class GenBalanceRequestVo {
     private String titulo;
+    private String periodo;
     private List<FilaBalanceVo> items;
-    private ResumenBalanceVo resumen;
+    private List<RBRowVo> resumenItems;
 
 }

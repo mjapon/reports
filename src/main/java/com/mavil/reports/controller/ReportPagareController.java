@@ -1,6 +1,7 @@
 package com.mavil.reports.controller;
 
 import com.mavil.reports.repository.TParamRepository;
+import com.mavil.reports.util.Constants;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -19,6 +20,7 @@ public class ReportPagareController extends ReportBaseController{
     @Autowired
     private TParamRepository paramRepository;
 
+    @CrossOrigin(origins = Constants.ALLOWED_ORIGINS)
     @GetMapping("{emp}/{codcred}")
     public ResponseEntity<ByteArrayResource> getReport(@PathVariable Integer emp, @PathVariable Integer codcred) throws JRException, IOException, SQLException {
 

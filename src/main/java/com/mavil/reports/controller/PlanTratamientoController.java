@@ -1,13 +1,11 @@
 package com.mavil.reports.controller;
 
 import com.mavil.reports.repository.TParamRepository;
+import com.mavil.reports.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -21,6 +19,7 @@ public class PlanTratamientoController extends ReportBaseController {
     @Autowired
     private TParamRepository paramRepository;
 
+    @CrossOrigin(origins = Constants.ALLOWED_ORIGINS)
     @GetMapping("{emp}/{cod}")
     public ResponseEntity<ByteArrayResource> getReport(@PathVariable Integer emp, @PathVariable Integer cod) throws SQLException {
 

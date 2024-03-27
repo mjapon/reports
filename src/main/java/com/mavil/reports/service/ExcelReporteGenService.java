@@ -42,7 +42,7 @@ public class ExcelReporteGenService {
             Row row0 = sheet.createRow(0);
 
             Cell cell = row0.createCell(0);
-            cell.setCellValue(String.format("BALANCE GENERAL\nPeriodo:%s", requestVo.getTitulo()));
+            cell.setCellValue(String.format("%s\nPeriodo:%s",requestVo.getTitulo(), requestVo.getPeriodo()));
             cell.setCellStyle(centerStyle);
             sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 2));
 

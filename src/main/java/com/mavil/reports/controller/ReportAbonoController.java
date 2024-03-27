@@ -1,6 +1,7 @@
 package com.mavil.reports.controller;
 
 import com.mavil.reports.repository.TParamRepository;
+import com.mavil.reports.util.Constants;
 import com.mavil.reports.vo.TransaccDataVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -18,6 +19,7 @@ public class ReportAbonoController extends ReportBaseController {
     @Autowired
     private TParamRepository paramRepository;
 
+    @CrossOrigin(origins = Constants.ALLOWED_ORIGINS)
     @GetMapping("{emp}/{trn}")
     public ResponseEntity<ByteArrayResource> getReport(@PathVariable Integer emp, @PathVariable Integer trn) throws SQLException {
 

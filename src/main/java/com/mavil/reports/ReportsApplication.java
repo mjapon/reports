@@ -9,8 +9,17 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 public class ReportsApplication extends SpringBootServletInitializer {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ReportsApplication.class, args);
-	}
+    public static void main(String[] args) {
+		 /*String JASPER_TYPE_FILE = ".jasper";
+		 String JRXML_TYPE_FILE = ".jrxml";
+
+		String reportPath = "/opt/reportes/mavil/templateFacturaYolis.jrxml";
+
+		String compiledReportPath = reportPath.substring(0, reportPath.lastIndexOf(JRXML_TYPE_FILE)).concat(JASPER_TYPE_FILE);
+
+		System.out.println(compiledReportPath);
+		System.out.println(reportPath);*/
+        SpringApplication.run(ReportsApplication.class, args);
+    }
 
 }

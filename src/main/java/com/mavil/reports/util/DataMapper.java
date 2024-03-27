@@ -18,8 +18,9 @@ public class DataMapper {
         Map<String, Object> data = new HashMap<>();
 
         data.put("items", request.getItems());
+        data.put("periodo", request.getPeriodo());
         data.put("titulo", request.getTitulo());
-        data.put("resumen", request.getResumen());
+        data.put("resumenitems", request.getResumenItems());
 
         context.setVariables(data);
 

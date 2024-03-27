@@ -20,6 +20,7 @@ public class ReportRecetaController extends ReportBaseController{
     @Autowired
     private TParamRepository paramRepository;
 
+    @CrossOrigin(origins = Constants.ALLOWED_ORIGINS)
     @GetMapping("{emp}/{ccm}")
     public ResponseEntity<ByteArrayResource> getReport(@PathVariable Integer emp, @PathVariable Integer ccm) throws JRException, IOException, SQLException {
 
