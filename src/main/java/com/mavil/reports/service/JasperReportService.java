@@ -33,7 +33,6 @@ public class JasperReportService {
     private DataSource dataSource;
 
     public byte[] runPdfReport(String reportPath, Map parameters) throws SQLException {
-
         Long timea = System.currentTimeMillis();
         byte[] result = {};
         Connection connection = dataSource.getConnection();
@@ -50,7 +49,7 @@ public class JasperReportService {
             }
         }
         Long timeb = System.currentTimeMillis();
-        log.info(String.format("Tiempo: %d", timeb - timea));
+        log.info(String.format("Reporte:%s, Tiempo: %d", reportPath, timeb - timea));
         return result;
     }
 
@@ -90,7 +89,7 @@ public class JasperReportService {
             }
         }
         Long timeb = System.currentTimeMillis();
-        log.info(String.format("Tiempo: %d", timeb - timea));
+        log.info(String.format("Reporte:%s, Tiempo: %d", reportPath, timeb - timea));
         return result;
     }
 
@@ -122,7 +121,7 @@ public class JasperReportService {
             }
         }
         Long timeb = System.currentTimeMillis();
-        log.info(String.format("Tiempo: %d", timeb - timea));
+        log.info(String.format("Reporte:%s, Tiempo: %d", reportPath, timeb - timea));
         return result;
     }
 
@@ -130,12 +129,7 @@ public class JasperReportService {
         if (reportPath.endsWith(JASPER_TYPE_FILE)) {
             return getCompiledReport(reportPath);
         } else {
-            String compiledReportPath = reportPath.substring(0, reportPath.lastIndexOf(JRXML_TYPE_FILE)).concat(JASPER_TYPE_FILE);
-            try {
-                return getCompiledReport(compiledReportPath);
-            } catch (JRException e) {
-                return compileReport(reportPath);
-            }
+            return compileReport(reportPath);
         }
     }
 
