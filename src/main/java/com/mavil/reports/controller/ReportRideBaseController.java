@@ -6,7 +6,9 @@ import com.mavil.reports.service.JasperReportService;
 import com.mavil.reports.util.GenXmlCompeUtil;
 import com.mavil.reports.vo.DatosAsiFacteVo;
 import com.mavil.reports.vo.DatosFacteVo;
+import com.mavil.reports.vo.NotaCredInfoVo;
 import com.mavil.reports.vo.TransaccDataVo;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -30,13 +32,37 @@ public class ReportRideBaseController extends ReportBaseController {
     @Autowired
     private TParamRepository paramRepository;
 
+    private static final String TRA_COD_NOTACRED = "4";
+
     private String getRucEmpresa(String claveAcceso) {
         return claveAcceso.substring(10, 23);
     }
 
-    private ResponseEntity<ByteArrayResource> genEmptyResponse(){
+    private ResponseEntity<ByteArrayResource> genEmptyResponse() {
         return buildHtmlMessage("Se produjo un error al tratar de generar RIDE, no hay datos de factura o configuracion de empresa");
     }
+
+    private Boolean isNotaCred(TransaccDataVo transaccDataVo) {
+        if (transaccDataVo != null && StringUtils.isNotEmpty(transaccDataVo.getTraCodigo())) {
+            return transaccDataVo.getTraCodigo().equals(TRA_COD_NOTACRED);
+        }
+        return false;
+    }
+
+    private String getPathRideFromTransaccType(TransaccDataVo transaccDataVo, String esquema) {
+        String pathReporteRide = "/opt/reportes/ride_factura.jrxml";
+        String auxPathRideTemplate;
+        if (isNotaCred(transaccDataVo)) {
+            auxPathRideTemplate = paramRepository.getParamValue(esquema, "pathRepRideNotaCred", transaccDataVo.getSecCodigo());
+        } else {
+            auxPathRideTemplate = paramRepository.getParamValue(esquema, "pathReporteRide", transaccDataVo.getSecCodigo());
+        }
+        if (StringUtils.isNotEmpty(auxPathRideTemplate)) {
+            pathReporteRide = auxPathRideTemplate;
+        }
+        return pathReporteRide;
+    }
+
     protected ResponseEntity<ByteArrayResource> genPdfRide(String claveacceso) throws SQLException {
 
         Optional<DatosFacteVo> datosFacteVo = datosFacteRepository.getDatosFacte(getRucEmpresa(claveacceso));
@@ -46,23 +72,28 @@ public class ReportRideBaseController extends ReportBaseController {
             Optional<DatosAsiFacteVo> datosAsiFacteVo = datosFacteRepository.getDatosAsiFacte(esquema, claveacceso);
 
             if (datosAsiFacteVo.isPresent()) {
-                TransaccDataVo transaccDataVo = paramRepository.getTransaccData(esquema, Integer.valueOf(datosAsiFacteVo.get().getTrncodigo()));
+                Integer trnCodigo = Integer.valueOf(datosAsiFacteVo.get().getTrncodigo());
+                TransaccDataVo transaccDataVo = paramRepository.getTransaccData(esquema, trnCodigo);
 
-                String pathRideTemplate = paramRepository.getParamValue(esquema, "pathReporteRide", transaccDataVo.getSecCodigo());
-
-                if (StringUtils.isEmpty(pathRideTemplate)) {
-                    pathRideTemplate = "/opt/reportes/ride_factura.jrxml";
-                }
+                String pathRideTemplate = getPathRideFromTransaccType(transaccDataVo, esquema);
 
                 String pathLogo = datosFacteVo.get().getPathLogo();
                 if (StringUtils.isEmpty(pathLogo) || ("null".equals(pathLogo.trim()))) {
                     pathLogo = "/opt/reportes/imgs/logosfacte/MavilCuadro.png";
                 }
 
-                Map reportParams = new HashMap();
+                Map<String, Object> reportParams = new HashMap<>();
                 reportParams.put("ptrncod", Integer.valueOf(datosAsiFacteVo.get().getTrncodigo()));
                 reportParams.put("pesquema", esquema);
                 reportParams.put("pathlogo", pathLogo);
+
+                if (isNotaCred(transaccDataVo)) {
+                    NotaCredInfoVo datosNotaCred = paramRepository.getDatosNotaCred(esquema, trnCodigo);
+                    if (datosNotaCred != null) {
+                        reportParams.put("numerofactura", datosNotaCred.getNumeroFactura());
+                        reportParams.put("fechafactura", datosNotaCred.getFechaFactura());
+                    }
+                }
 
                 byte[] reportContent = jasperReportService.runPdfReport(pathRideTemplate, reportParams);
 

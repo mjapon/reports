@@ -1,5 +1,7 @@
 package com.mavil.reports.repository;
 
+import com.mavil.reports.util.FechasUtil;
+import com.mavil.reports.vo.NotaCredInfoVo;
 import com.mavil.reports.vo.TransaccDataVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Component;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -82,6 +85,30 @@ public class TParamRepository {
             throw ex;
         }
     }
+
+    public NotaCredInfoVo getDatosNotaCred(String esquema, Integer trncod) {
+        try {
+            String sql = String.format("select fac.trn_compro, fac.trn_fecreg from %s.tasiento fac " +
+                    "join %s.ttransaccrel rel on rel.trn_codorigen  = fac.trn_codigo and rel.trel_tracoddestino  = 4 " +
+                    "and rel.trel_activo  = true where rel.trn_coddestino  = %d", esquema, esquema, trncod);
+
+            Object[] result = (Object[]) entityManager.createNativeQuery(sql).getSingleResult();
+            if (result != null) {
+                String numeroFactura = String.valueOf(result[0]);
+                Date fecha = (Date) result[1];
+                return NotaCredInfoVo.builder()
+                        .numeroFactura(numeroFactura)
+                        .fechaFactura(FechasUtil.formatDate(fecha))
+                        .build();
+            }
+            return null;
+
+        } catch (RuntimeException ex) {
+            log.error("Error al recuperar datos de factura relacionada con nota de credito", ex);
+            throw ex;
+        }
+    }
+
 
     public Boolean isNotaVenta(Integer traCodigo) {
         return traCodigo.intValue() == 2;

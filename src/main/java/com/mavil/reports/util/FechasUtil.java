@@ -8,13 +8,16 @@ import java.time.format.DateTimeFormatter;
 
 public class FechasUtil {
 
+    private static final String FORMATO_DB = "yyyy-MM-dd";
+    private static final String FORMATO_PRESENTACION ="dd/MM/yyyy";
+
     public static String formatCadenaDb(Date fecha) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(FORMATO_DB);
         return simpleDateFormat.format(fecha);
     }
 
     public static String formatCadenaDb(java.util.Date fecha) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(FORMATO_DB);
         return simpleDateFormat.format(fecha);
     }
 
@@ -23,6 +26,11 @@ public class FechasUtil {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(formato);
         java.util.Date fecha = simpleDateFormat.parse(fechaString);
         return fecha;
+    }
+
+    public static String formatDate(java.util.Date fecha) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(FORMATO_PRESENTACION);
+        return simpleDateFormat.format(fecha);
     }
 
     /**
